@@ -7,6 +7,7 @@ import cv2
 import os  
 import time  
 
+
 st.set_page_config(layout="centered")  
 
 cfg_model_path = 'models/yolov5s.pt'  
