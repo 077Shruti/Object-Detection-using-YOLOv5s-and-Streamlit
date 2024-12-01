@@ -7,7 +7,6 @@ import cv2
 import os  
 import time  
 
-
 st.set_page_config(layout="centered")  
 
 cfg_model_path = 'models/yolov5s.pt'  
@@ -37,16 +36,29 @@ def video_input(data_src):
     if vid_bytes:  
     # Ensure the directory exists  
         upload_dir = "data/uploaded_data" 
-         # Create the directory if it doesn't exist 
+        # Create the directory if it doesn't exist 
         os.makedirs(upload_dir, exist_ok=True)   
         vid_file = os.path.join(upload_dir, "upload." + vid_bytes.name.split('.')[-1])  
         with open(vid_file, 'wb') as out:  
             out.write(vid_bytes.read())  
 
     if vid_file:  
-        cap = cv2.VideoCapture(vid_file)  
+        cap = cv2.VideoCapture(vid_file) #read the frames from video 
         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))  
-        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))  
+        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)) 
+
+        # showing the:
+        fps = 0 #frame per second
+        st1, st2, st3 = st.columns(3)
+        with st1:
+            st.markdown("## Height")
+            st1_text = st.markdown(f"{height}") #height of frame 
+        with st2:
+            st.markdown("## Width")
+            st2_text = st.markdown(f"{width}") #width of frame
+        with st3:
+            st.markdown("## FPS")
+            st3_text = st.markdown(f"{fps}") 
       
         output = st.empty()  
         prev_time = 0  
@@ -63,11 +75,15 @@ def video_input(data_src):
             curr_time = time.time()  
             fps = 1 / (curr_time - prev_time) if prev_time else 0  
             prev_time = curr_time  
+            st1_text.markdown(f"**{height}**")
+            st2_text.markdown(f"**{width}**")
+            st3_text.markdown(f"**{fps:.2f}**")
+
             
 
         cap.release()
 
-
+# Predicting the image using the model
 def infer_image(img, size=None):  
     model.conf = confidence  
     result = model(img, size=size) if size else model(img)  
